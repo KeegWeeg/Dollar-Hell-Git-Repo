@@ -3,9 +3,11 @@ const canvas = document.getElementById('myCanvas');
 // Creating a 2D instance of canvas
 const ctx = canvas.getContext('2d');
 
-
-
-
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+ 
 // Class for the ball in case I want to implement more balls later 
 class Ball {
   constructor (x,y,radius, speed, playable, color){
@@ -128,7 +130,7 @@ if (Array.isArray(listOfObstacles)){ // If statement to use an array for isColli
       //  keys.space = false; // Reset the key to prevent multiple triggers
     }
   
-//Removes messages after time, displays them if not removed 
+// Removes messages after time, displays them if not removed 
 handleMessages(){
   this.messages = this.messages.filter((message) => {
         message[1] += 16.67777;
@@ -175,11 +177,6 @@ class Depo {
       
     }
 }
-
-// Record key presses
-const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, space: false, a: false, s: false, d: false, w: false,
-};
-
 // Game Variables and Initial Setup
 let messages = [];
 let obstacles = []; // Add more obstacles as needed
@@ -195,7 +192,6 @@ const NPC = new Ball(90, 90, 20, 5, false, NPCColor);
 balls.push(ball, NPC);
 console.log(balls);
 const depo = new Depo(50, 50, 500, 15, obstacleColor);
-
 
 // Initialize the game, set up event listeners and game loop
 window.onload = function () {
@@ -216,33 +212,26 @@ window.onload = function () {
     gameLoop(); // Start the game loop
 };
 
-function resizeCanvas(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
 // Handle key press down events
 function handleKeydown(event) {
-    if (event.key in keys) {
+  if (event.key in keys) {
 
-        keys[event.key] = true;
-    }
-  if (event.key == " "){
-    keys["space"] = true;
+      keys[event.key] = true;
   }
+if (event.key == " "){
+  keys["space"] = true;
+}
 }
 
 // Handle key release events
 function handleKeyup(event) {
-    if (event.key in keys) {
-        keys[event.key] = false;
-    }
-  if (event.key == " "){
-    keys["space"] = false;
+  if (event.key in keys) {
+      keys[event.key] = false;
   }
+if (event.key == " "){
+  keys["space"] = false;
 }
-
-
+}
 
 // Helper functions
 function drawFromObject(obj) {
@@ -262,14 +251,6 @@ function getRandomInt(min, max) {
 function drawObstacles(){
   obstacles.forEach(drawFromObject);
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -341,7 +322,35 @@ class Bush {
 }
 
 
+// Record key presses
+const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, space: false, a: false, s: false, d: false, w: false,
+};
 
 
 
 
+// Make these functions work outside of class for everyone COMMUNISM!
+  willCollide(nextX, nextY, listOfObstacles) {
+    // For each object in obstacles it checks if the ball's radius is greater than the distance from the obstacle, if it is, there is a collision and it immediately returns true. 
+    return listOfObstacles.some(obj => this.radius > this.findDistance(nextX, nextY, obj));
+  }
+    // Checks for an active collision 
+     isColliding(listOfObstacles) {
+  if (Array.isArray(listOfObstacles)){ // If statement to use an array for isColliding 
+     
+    // For each object it checks if the collection distance is greater than the distance of the ball from the obstacle if it is it returns true
+    return listOfObstacles.some(obj => this.collectionDistance > this.findDistance(this.x, this.y, obj));
+   
+  } else {  // If statement if just a singular obstacle is being checked
+   
+    // Checks if the collection distance is greater than the distance of the ball from the obstacle if it is it returns true
+     return this.collectionDistance > this.findDistance(this.x, this.y, listOfObstacles)
+  }
+     }
+  
+  // Finds distance between two objects 
+    findDistance(x, y, obj) {
+          const closestX = Math.max(obj.x, Math.min(x, obj.x + obj.width));
+          const closestY = Math.max(obj.y, Math.min(y, obj.y + obj.height)); 
+          return Math.sqrt((x - closestX) ** 2 + (y - closestY) ** 2); // Returns Distance
+      }
