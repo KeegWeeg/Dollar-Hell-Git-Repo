@@ -8,7 +8,7 @@ function resizeCanvas(){
   canvas.height = window.innerHeight;
 }
  
-// Class for the ball in case I want to implement more balls later 
+// Class for the ball in case implement more balls later 
 class Ball {
   constructor (x,y,radius, speed, playable, color){
     this.playable = playable; // Wether its an NPC or not 
@@ -36,7 +36,7 @@ class Ball {
   }
   
   // Method for taking the key presses and updating the change in X or Y of ball
-  calculateMovement(keys, canvasHeight, canvasWidth) {  
+  calculateMovement(keys) {  
     let nextX = this.x; // Update nextX
     let nextY = this.y; // Update nextY
 
@@ -325,32 +325,3 @@ class Bush {
 // Record key presses
 const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, space: false, a: false, s: false, d: false, w: false,
 };
-
-
-
-
-// Make these functions work outside of class for everyone COMMUNISM!
-  willCollide(nextX, nextY, listOfObstacles) {
-    // For each object in obstacles it checks if the ball's radius is greater than the distance from the obstacle, if it is, there is a collision and it immediately returns true. 
-    return listOfObstacles.some(obj => this.radius > this.findDistance(nextX, nextY, obj));
-  }
-    // Checks for an active collision 
-     isColliding(listOfObstacles) {
-  if (Array.isArray(listOfObstacles)){ // If statement to use an array for isColliding 
-     
-    // For each object it checks if the collection distance is greater than the distance of the ball from the obstacle if it is it returns true
-    return listOfObstacles.some(obj => this.collectionDistance > this.findDistance(this.x, this.y, obj));
-   
-  } else {  // If statement if just a singular obstacle is being checked
-   
-    // Checks if the collection distance is greater than the distance of the ball from the obstacle if it is it returns true
-     return this.collectionDistance > this.findDistance(this.x, this.y, listOfObstacles)
-  }
-     }
-  
-  // Finds distance between two objects 
-    findDistance(x, y, obj) {
-          const closestX = Math.max(obj.x, Math.min(x, obj.x + obj.width));
-          const closestY = Math.max(obj.y, Math.min(y, obj.y + obj.height)); 
-          return Math.sqrt((x - closestX) ** 2 + (y - closestY) ** 2); // Returns Distance
-      }
